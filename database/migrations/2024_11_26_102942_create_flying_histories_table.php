@@ -13,10 +13,7 @@ return new class extends Migration
     {
         Schema::create('flying_histories', function (Blueprint $table) {
             $table->id();
-            $table->timestamp('start_time')->nullable();
-            $table->timestamp('end_time')->nullable();
-            $table->boolean('is_active')->default(true); // Track if the game is active
-            $table->decimal('final_multiplier', 8, 2)->nullable(); // Store final multiplier
+            $table->decimal('final_multiplier', 8, 2)->nullable();
             $table->timestamps();
         });
 }

@@ -11,17 +11,14 @@ class FlyingHistory extends Model
 
     // Ensure datetime fields are cast to Carbon instances
     protected $casts = [
-        'start_time' => 'datetime',
-        'end_time' => 'datetime',
+
         'final_multiplier' => 'float',
     ];
 
     // Specify which fields are mass-assignable
     protected $fillable = [
         'final_multiplier',
-        'end_time',
-        'start_time',
-        'is_active',
+
     ];
 
 }
