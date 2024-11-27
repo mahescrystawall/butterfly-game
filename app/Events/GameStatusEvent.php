@@ -28,15 +28,7 @@ class GameStatusEvent implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new Channel('game-status');
-    }
-
-    /**
-     * Name of the event.
-     */
-    public function broadcastAs()
-    {
-        return 'game.status.update';
+        return new Channel('gameStatus');
     }
 
     /**

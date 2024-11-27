@@ -40,7 +40,7 @@ class GameService
     private function stopGame()
     {
         echo "Game Ended ...\n";
-        sleep(5);
+        sleep(3);
 
         // After stopping, create a new game row
         $this->createNewGame();
