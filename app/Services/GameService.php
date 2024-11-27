@@ -20,6 +20,7 @@ class GameService
 
     public function startGame()
     {
+        echo "Game Started ..." ;
         // Only generate the random end time, do not create a new game instance here
         $randomNumber = $this->generateRandomEndTime();
 
@@ -34,6 +35,8 @@ class GameService
 
     private function stopGame()
     {
+        echo "Game Ended ..." ;
+        sleep(5);
         // After stopping, create a new game row
         $this->createNewGame();
 
@@ -45,11 +48,8 @@ class GameService
     {
         // Create a new game record after the current game ends
         $this->generateRandomEndTime(); // Generate a new random end time for the new game
-        $newGame = new FlyingHistory();
-        $newGame->final_multiplier = $this->randomEndTime;
-        $newGame->save();
 
-        echo "New game created: " . $newGame->id . PHP_EOL;
+
     }
 
     private function resetGameState()
@@ -70,11 +70,19 @@ class GameService
 
             // Check if the multiplier has reached or exceeded the random end time
             if ($this->multiplier >= $randomNumber) {
+                $newGame = new FlyingHistory();
+                $newGame->final_multiplier = $this->multiplier;
+                $newGame->save();
+                $gameData = [
+                    'final_multiplier' => $this->multiplier,
+                    'end_time' => now(),
+                ];
+                broadcast(new GameEndEvent($gameData));
                 $this->stopGame(); // Stop the game
                 break;
             }
 
-            sleep(1); // Pause for a second before the next loop iteration
+            sleep(1);
         }
     }
 
