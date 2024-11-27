@@ -1,8 +1,8 @@
 <?php
-
 namespace App\Services;
 
 use App\Models\FlyingHistory;
+use App\Events\GameStatusEvent;
 use Carbon\Carbon;
 
 class GameService
@@ -20,9 +20,13 @@ class GameService
 
     public function startGame()
     {
-        echo "Game Started ..." ;
-        // Only generate the random end time, do not create a new game instance here
+        echo "Game Started ...\n";
+
+        // Generate random end time for the game
         $randomNumber = $this->generateRandomEndTime();
+
+        // Broadcast the start of the game
+        $this->broadcastGameStatus('start', $this->multiplier);
 
         // Start the game loop without saving a new game
         $this->gameLoop($randomNumber);
@@ -35,8 +39,9 @@ class GameService
 
     private function stopGame()
     {
-        echo "Game Ended ..." ;
+        echo "Game Ended ...\n";
         sleep(5);
+
         // After stopping, create a new game row
         $this->createNewGame();
 
@@ -48,8 +53,6 @@ class GameService
     {
         // Create a new game record after the current game ends
         $this->generateRandomEndTime(); // Generate a new random end time for the new game
-
-
     }
 
     private function resetGameState()
@@ -66,18 +69,23 @@ class GameService
             $this->multiplier += $this->rate;
             $this->rate += 0.01;
 
-            echo "Current multiplier: " . number_format($this->multiplier, 2) . PHP_EOL;
+            echo "Current multiplier: " . number_format($this->multiplier, 2) . "\n";
+
+            // Broadcast the updated multiplier during the game
+            $this->broadcastGameStatus('Running', $this->multiplier);
 
             // Check if the multiplier has reached or exceeded the random end time
             if ($this->multiplier >= $randomNumber) {
                 $newGame = new FlyingHistory();
                 $newGame->final_multiplier = $this->multiplier;
                 $newGame->save();
+
                 $gameData = [
                     'final_multiplier' => $this->multiplier,
                     'end_time' => now(),
                 ];
-                broadcast(new GameEndEvent($gameData));
+                $this->broadcastGameStatus('end', $this->multiplier);
+
                 $this->stopGame(); // Stop the game
                 break;
             }
@@ -95,5 +103,16 @@ class GameService
             : mt_rand(6, 100); // Longer game time (6-100)
 
         return $this->randomEndTime;
+    }
+
+    /**
+     * Broadcast the game status update.
+     *
+     * @param string $status The status of the game (e.g., 'start', 'in-progress', 'end').
+     * @param float $multiplier The current multiplier of the game.
+     */
+    private function broadcastGameStatus($status, $multiplier)
+    {
+        event(new GameStatusEvent($status, $multiplier));
     }
 }
