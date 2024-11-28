@@ -5,10 +5,10 @@ namespace App\Events;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 
-class GameLastScoreEvent implements ShouldBroadcast
+class GameLastScoreEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, Queueable;
 
@@ -31,7 +31,6 @@ class GameLastScoreEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        console.log("hi");
         return new Channel('gameStatus');
     }
 
@@ -47,13 +46,5 @@ class GameLastScoreEvent implements ShouldBroadcast
         ];
     }
 
-    /**
-     * The event's broadcast name.
-     *
-     * @return string
-     */
-    public function broadcastAs()
-    {
-        return 'game-last-score';  // You can customize this event name if needed
-    }
+
 }

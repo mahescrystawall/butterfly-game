@@ -80,8 +80,7 @@ class GameService
                 $newGame = new FlyingHistory();
                 $newGame->final_multiplier = $this->multiplier;
                 $newGame->save();
-                event(new GameLastScoreEvent($multiplier));
-              // broadcast(new GameLastScoreEvent($this->multiplier));
+                //event(new GameLastScoreEvent($multiplier));
               // event(new GameLastScoreEvent($this->multiplier));
                 echo "Current multiplier: " . $this->multiplier . "\n";
                 $gameData = [
@@ -89,6 +88,9 @@ class GameService
                     'end_time' => now(),
                 ];
                 $this->broadcastGameStatus('end', $this->multiplier);
+
+              broadcast(new GameLastScoreEvent($this->multiplier));
+
 
                 $this->stopGame(); // Stop the game
                 break;
