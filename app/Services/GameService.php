@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Models\FlyingHistory;
+use App\Events\GameLastScoreEvent;
 use App\Events\GameStatusEvent;
 use Carbon\Carbon;
 
@@ -80,6 +81,9 @@ class GameService
                 $newGame->final_multiplier = $this->multiplier;
                 $newGame->save();
 
+               broadcast(new GameLastScoreEvent($this->multiplier));
+              // event(new GameLastScoreEvent($this->multiplier));
+                echo "Current multiplier: " . $this->multiplier . "\n";
                 $gameData = [
                     'final_multiplier' => $this->multiplier,
                     'end_time' => now(),
