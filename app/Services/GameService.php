@@ -80,8 +80,8 @@ class GameService
                 $newGame = new FlyingHistory();
                 $newGame->final_multiplier = $this->multiplier;
                 $newGame->save();
-
-               broadcast(new GameLastScoreEvent($this->multiplier));
+                event(new GameLastScoreEvent($multiplier));
+              // broadcast(new GameLastScoreEvent($this->multiplier));
               // event(new GameLastScoreEvent($this->multiplier));
                 echo "Current multiplier: " . $this->multiplier . "\n";
                 $gameData = [

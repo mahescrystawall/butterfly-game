@@ -32,7 +32,7 @@ class GameLastScoreEvent implements ShouldBroadcast
     public function broadcastOn()
     {
         console.log("hi");
-        return new Channel('gameLatestStatus');
+        return new Channel('gameStatus');
     }
 
     /**
